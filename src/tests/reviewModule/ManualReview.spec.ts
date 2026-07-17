@@ -32,3 +32,8 @@ test('@Verify Manual Review Search Functionality', async ({ }) => {
     test.setTimeout(180000);
     await manualReviewPage.verifyManualReviewSearch();
 });
+
+test('@Verify Manual Review Date Filter Functionality', async ({ }) => {
+    test.setTimeout(600000);
+    await manualReviewPage.verifyManualReviewDateFilter();
+});
