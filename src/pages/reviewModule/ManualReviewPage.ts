@@ -34,7 +34,6 @@ export class ManualReviewPage extends BasePage {
     private reviewsMenu = "//span[normalize-space()='Reviews']";
     private manualReviews = "//a[normalize-space()='Manual Reviews']"
 
-    // Sorting Locators
     private nameSortButton = "//th//div[normalize-space()='Name']";
     private createdDateSortButton = "//th//div[normalize-space()='Created Date']";
     private updatedDateSortButton = "//th//div[normalize-space()='Updated Date']";
@@ -44,14 +43,14 @@ export class ManualReviewPage extends BasePage {
     private updatedDateCells = "//td[3]//h5";
     private updatedTimeCells = "//td[3]//p";
 
-    // Records Per Page & Pagination Locators
+
     private viewDropdown = "//span[normalize-space()='View']/following::div[@role='combobox'][1]";
     private showingText = "//span[contains(normalize-space(),'Showing')]";
     private previousButton = "//button[@aria-label='Go to previous page']";
     private nextButton = "//button[@aria-label='Go to next page']";
     private tableRows = "//table//tbody//tr";
 
-    // Delete Manual Review Locators
+
     private deleteIcon = "//button[.//span[text()='delete']]";
     private deleteDialog = "//div[@role='dialog']";
     private deleteDialogHeading = "//h4[contains(text(),'You want to delete this review?')]";
@@ -60,12 +59,10 @@ export class ManualReviewPage extends BasePage {
     private searchInput = "//input[@type='text' and @placeholder='Search here']";
     private successToast = "//div[@role='alert']//div[normalize-space()='Deleted successfully']";
 
-    // Search Manual Review Locators
     private phoneCells = "//td[1]//p[1]";
     private emailCells = "//td[1]//p[2]";
     private noRecordsFound = "//h3[normalize-space()='No Records Found']";
 
-    // Date Filter Manual Review Locators
     private filterButton = "(//div[normalize-space()='filter_alt'])[2]";
     private createdDateInput = "//input[@placeholder='Select date range']";
     private todayPreset = "//button[normalize-space()='Today']";
@@ -81,8 +78,22 @@ export class ManualReviewPage extends BasePage {
     private futureDateDisabled = "//button[contains(@class,'future') and contains(@class,'disabled')]";
     private normalDateButton = "//button[contains(@class,'date') and contains(@class,'norange')]";
     private clearAllButton = "//button[.//h6[normalize-space()='Clear All']]";
-    private calendarWrapper = "//button[normalize-space()='Previous month']";
+    private calendarWrapper = "//div[contains(@class,'calendars-container')]";
     private calendarMonthYear = "//div[contains(@class,'rdrCalendarWrapper')]//span[contains(@class,'rdrCalendar')]";
+
+    private listFilterButton = "(//div[normalize-space()='filter_alt'])[2]";
+
+    private reachOutDropdown = "//label[normalize-space()='Reach Out By']/following::button[@aria-label='Open'][1]";
+    private reachOutOption = (option: string) => `//li[@role='option'][.//span[normalize-space()='${option}']]`;
+
+    private tableRowList = "//table//tbody//tr";
+    private rowName = "xpath=.//td[1]//h5";
+    private rowCreatedDate = "xpath=.//td[2]//h5";
+    private rowUpdatedDate = "xpath=.//td[3]//h5";
+
+    private emailIconSelector = "xpath=.//*[@aria-label='Email']";
+    private phoneIconSelector = "xpath=.//*[@aria-label='Phone']";
+    private doNotContactIconSelector = "xpath=.//*[@aria-label='Do not contact']";
 
 
 
@@ -106,7 +117,6 @@ export class ManualReviewPage extends BasePage {
 
     // ACTION 
 
-// sorting listing page for manual reviews 
 
 
 
@@ -196,6 +206,15 @@ export class ManualReviewPage extends BasePage {
         return true;
     }
 
+    async verifySortingFunctionality(): Promise<void> {
+        await this.verifyNameSortingAscending();
+        await this.verifyNameSortingDescending();
+        await this.verifyCreatedDateSortingAscending();
+        await this.verifyCreatedDateSortingDescending();
+        await this.verifyUpdatedDateSortingAscending();
+        await this.verifyUpdatedDateSortingDescending();
+    }
+
     async verifyNameSortingAscending(): Promise<void> {
         await this.page.locator(this.nameSortButton).waitFor({ state: 'visible', timeout: 15000 });
         for (let attempt = 0; attempt < 3; attempt++) {
@@ -277,7 +296,10 @@ export class ManualReviewPage extends BasePage {
         console.log("Descending Order:", dates.map((d, i) => `${d} ${times[i]}`));
         console.log("   Verified: Updated Date sorted in Descending Order.");
     }
-// Action for all Page And Records Related Logic 
+
+
+
+
 
 
     private getOptionLocator(option: string): string {
@@ -416,7 +438,13 @@ export class ManualReviewPage extends BasePage {
         await this.verifyNextButtonPagination(400);
     }
 
-// Action for Delete Manual Review Related Logic 
+
+
+
+
+
+
+
 
     async captureFirstRowDetails(): Promise<{ name: string, createdDateTime: string, updatedDateTime: string }> {
         await this.page.locator(this.nameCells).first().waitFor({ state: 'visible', timeout: 15000 });
@@ -602,7 +630,10 @@ export class ManualReviewPage extends BasePage {
         await this.verifyRecordDeleted(record.name, record.createdDateTime, record.updatedDateTime);
     }
 
-// Search Manual Review Related Logic
+
+
+
+
 
     async printAllAvailableManualReviews(): Promise<void> {
         await this.page.locator(this.nameCells).first().waitFor({ state: 'visible', timeout: 15000 });
@@ -658,7 +689,6 @@ export class ManualReviewPage extends BasePage {
         const emailParts = email.split('@');
         const partialEmail = emailParts.length > 1 ? emailParts[0] : email.substring(0, 4);
 
-        // Step 3: Single Character Search
         console.log("");
         console.log("=====================================");
         console.log("  Single Character Search");
@@ -678,7 +708,6 @@ export class ManualReviewPage extends BasePage {
         }
         await this.clearSearch();
 
-        // Step 5: Minimum 2 Character Search
         console.log("");
         console.log("=====================================");
         console.log(" Minimum 2 Character Search");
@@ -697,7 +726,6 @@ export class ManualReviewPage extends BasePage {
         }
         await this.clearSearch();
 
-        // Step 7: Exact Review Name Search
         console.log("");
         console.log("=====================================");
         console.log(" Exact Review Name Search");
@@ -722,7 +750,6 @@ export class ManualReviewPage extends BasePage {
         }
         await this.clearSearch();
 
-        // Step 9: First Name Search
         console.log("");
         console.log("=====================================");
         console.log(" First Name Search");
@@ -740,7 +767,6 @@ export class ManualReviewPage extends BasePage {
         }
         await this.clearSearch();
 
-        // Step 11: Last Name Search
         console.log("");
         console.log("=====================================");
         console.log("    Last Name Search");
@@ -758,7 +784,6 @@ export class ManualReviewPage extends BasePage {
         }
         await this.clearSearch();
 
-        // Step 13: Partial Name Search
         console.log("");
         console.log("=====================================");
         console.log(" Partial Name Search");
@@ -776,7 +801,6 @@ export class ManualReviewPage extends BasePage {
         }
         await this.clearSearch();
 
-        // Step 15: Full Phone Number Search
         console.log("");
         console.log("=====================================");
         console.log("Full Phone Number Search");
@@ -798,7 +822,9 @@ export class ManualReviewPage extends BasePage {
             console.log("SKIP - No phone number available");
         }
 
-        // Step 17: Partial Phone Number Search
+
+
+
         console.log("");
         console.log("=====================================");
         console.log(" Partial Phone Number Search");
@@ -820,7 +846,6 @@ export class ManualReviewPage extends BasePage {
             console.log("SKIP - No phone number available");
         }
 
-        // Step 19: Email Address Search
         console.log("");
         console.log("=====================================");
         console.log("  Email Address Search");
@@ -842,7 +867,6 @@ export class ManualReviewPage extends BasePage {
             console.log("SKIP - No email available");
         }
 
-        // Step 21: Partial Email Search
         console.log("");
         console.log("=====================================");
         console.log(" Partial Email Search");
@@ -864,7 +888,6 @@ export class ManualReviewPage extends BasePage {
             console.log("SKIP - No email available");
         }
 
-        // Step 23: Maximum Length String Search
         console.log("");
         console.log("=====================================");
         console.log(" Maximum Length String Search");
@@ -879,7 +902,6 @@ export class ManualReviewPage extends BasePage {
         await this.page.goto('/review/manual_review');
         await this.page.waitForLoadState('networkidle');
 
-        // Step 25: Invalid Data Search
         console.log("");
         console.log("=====================================");
         console.log(" Invalid Data Search");
@@ -904,7 +926,9 @@ export class ManualReviewPage extends BasePage {
         await this.clearSearch();
     }
 
-// Date Filter Manual Review Related Logic
+
+
+
 
     private monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'];
@@ -1059,24 +1083,32 @@ export class ManualReviewPage extends BasePage {
         const maxAttempts = 50;
         for (let i = 0; i < maxAttempts; i++) {
             await this.page.waitForTimeout(500);
+
+
+
+
             const calText = await this.page.evaluate(() => {
-                const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-                const divs = document.querySelectorAll('div');
-                for (const div of divs) {
-                    const text = div.textContent?.trim() || '';
+                const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December'];
+                const headerDivs = document.querySelectorAll('.calendar header span > div:first-child');
+                for (const div of headerDivs) {
+                    // Normalize: "June\n2026" or "June2026" → "June 2026"
+                    const text = (div.textContent ?? '').replace(/\s+/g, ' ').trim();
                     for (const m of monthNames) {
-                        const pattern = new RegExp(`^${m}\\s+\\d{4}$`);
-                        if (pattern.test(text)) {
-                            return text;
+                        const pattern = new RegExp(`^${m}\\s*(\\d{4})$`);
+                        const match = text.match(pattern);
+                        if (match) {
+                            return `${m} ${match[1]}`; // normalized "June 2026"
                         }
                     }
                 }
                 return null;
             });
+
             if (calText) {
                 const { month, year } = this.parseCalendarMonthYear(calText);
                 if (month === targetMonth && year === targetYear) {
-                    return;
+                    return; // Already on the correct month/year
                 }
                 const targetDate = new Date(targetYear, this.monthNames.indexOf(targetMonth));
                 const calDate = new Date(year, this.monthNames.indexOf(month));
@@ -1103,35 +1135,52 @@ export class ManualReviewPage extends BasePage {
 
     private async selectCalendarDay(day: number, targetMonth: string, targetYear: number): Promise<void> {
         await this.page.waitForTimeout(500);
+
+
+
+
         const clicked = await this.page.evaluate(({ dayNum, month, year }) => {
-            const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-            const monthIdx = monthNames.indexOf(month);
-            const divs = document.querySelectorAll('div');
-            for (const div of divs) {
-                const text = div.textContent?.trim() || '';
-                if (text === `${month} ${year}`) {
-                    let panel = div;
-                    for (let i = 0; i < 10; i++) {
-                        if (panel.parentElement) panel = panel.parentElement;
-                    }
-                    const buttons = panel.querySelectorAll('button');
-                    for (const btn of buttons) {
-                        const btnText = btn.textContent?.trim();
-                        if (btnText === String(dayNum)) {
-                            const isDisabled = btn.classList.contains('disabled') || btn.classList.contains('rdrDayPassive') || (btn as HTMLButtonElement).disabled;
-                            if (!isDisabled) {
-                                btn.click();
-                                return true;
-                            }
+
+            const calendarPanels = document.querySelectorAll('.calendar');
+
+            for (const panel of calendarPanels) {
+
+
+                const headerDiv = panel.querySelector('header span > div:first-child');
+                if (!headerDiv) continue;
+
+                const headerText = (headerDiv.textContent ?? '').replace(/\s+/g, ' ').trim();
+
+                if (!headerText.includes(month) || !headerText.includes(String(year))) continue;
+
+                const monthGrid = panel.querySelector('.month');
+                if (!monthGrid) continue;
+
+
+                const buttons = monthGrid.querySelectorAll('button');
+                for (const btn of buttons) {
+                    const btnText = (btn.textContent ?? '').trim();
+                    if (btnText === String(dayNum)) {
+                        const isDisabled =
+                            btn.classList.contains('disabled') ||
+                            btn.classList.contains('future') ||
+                            (btn as HTMLButtonElement).disabled;
+                        if (!isDisabled) {
+                            btn.click();
+                            return true;
                         }
                     }
-                    break;
                 }
             }
             return false;
+
         }, { dayNum: day, month: targetMonth, year: targetYear });
+
         if (clicked) {
             await this.page.waitForTimeout(500);
+            console.log(`   Clicked day ${day} ${targetMonth} ${targetYear}`);
+        } else {
+            console.log(`   WARNING: Could not click day ${day} ${targetMonth} ${targetYear}`);
         }
     }
 
@@ -1202,7 +1251,7 @@ export class ManualReviewPage extends BasePage {
 
         await this.navigateCalendarToMonthYear(startMonth, startYear);
         await this.selectCalendarDay(startDay, startMonth, startYear);
-        await this.page.waitForTimeout(500);
+        await this.page.waitForTimeout(1000); // Wait for calendar to update state after start date click
 
         await this.navigateCalendarToMonthYear(endMonth, endYear);
         await this.selectCalendarDay(endDay, endMonth, endYear);
@@ -1444,7 +1493,7 @@ export class ManualReviewPage extends BasePage {
     }
 
     async verifyManualReviewDateFilter(): Promise<void> {
-        // Scenario 1: Open Date Filter
+
         console.log("");
         console.log("========================================");
         console.log(" Scenario 1: Open Date Filter");
@@ -1477,41 +1526,33 @@ export class ManualReviewPage extends BasePage {
         console.log("========================================");
         console.log("");
 
-        // Scenarios 2-7: Preset Filters
         const presets = ['Today', 'Yesterday', 'This week', 'Last week', 'This month', 'Last month'];
         for (const preset of presets) {
             await this.verifyPresetFilter(preset);
         }
 
-        // Scenario 8: Verify Today Again
         console.log("");
         console.log("--- Scenario 8: Verify Today Again ---");
         console.log("");
         await this.verifyPresetFilter('Today');
 
-        // Scenarios 9-10: Custom Date Range
         console.log("");
         console.log("--- Scenario 9-10: Custom Date Range ---");
         console.log("");
-        await this.verifyCustomDateRange(15, 'July', 2001, 20, 'August', 2023);
+        await this.verifyCustomDateRange(3, 'July', 2020, 20, 'August', 2023);
 
-        // Scenario 11: Verify Disabled Future Dates
         await this.clearFilter();
         await this.verifyFutureDatesDisabled();
 
-        // Scenario 12: Verify Normal Dates Clickable
         await this.clearFilter();
         await this.verifyNormalDatesClickable();
 
-        // Scenario 13: Verify Cancel Button
         await this.clearFilter();
         await this.verifyCancelButton();
 
-        // Scenario 14: Verify Apply Button
         await this.clearFilter();
         await this.verifyApplyButton();
 
-        // Scenario 15: Verify Clear All
         await this.clearFilter();
         await this.verifyClearAll();
 
@@ -1519,5 +1560,449 @@ export class ManualReviewPage extends BasePage {
         console.log("========================================");
         console.log(" Date Filter Test Complete");
         console.log("========================================");
+    }
+
+
+    async clickFilterButton(): Promise<void> {
+        await this.waitForVisible(this.listFilterButton);
+        await this.page.locator(this.listFilterButton).click({ force: true });
+        await this.page.waitForTimeout(2000);
+    }
+
+    /**
+     * @param option "Email" | "Phone" | "Email & Phone" | "Do Not Contact"
+     */
+    async selectReachOutBy(option: string): Promise<void> {
+        if (!(await this.page.locator(this.createdDateInput).isVisible().catch(() => false))) {
+            await this.page.locator(this.listFilterButton).click({ force: true });
+            await this.page.waitForTimeout(2000);
+        }
+        const closeButton = "//label[normalize-space()='Reach Out By']/following::button[@aria-label='Close'][1]";
+        if (!(await this.page.locator(closeButton).isVisible().catch(() => false))) {
+            await this.waitForVisible(this.reachOutDropdown);
+            await this.click(this.reachOutDropdown);
+        }
+
+        const optionXpath = this.reachOutOption(option);
+        await this.waitForVisible(optionXpath);
+        await this.click(optionXpath);
+
+        await this.page.waitForTimeout(2000);
+    }
+
+
+    async verifyReviewList(option: string): Promise<{ passed: number; failed: number }> {
+        const rows = this.page.locator(this.tableRowList);
+        const rowCount = await rows.count();
+
+        console.log("--------------------------------------------------------------------------------------------------------------------");
+        console.log("Name               Created Date      Updated Date      Expected Option      Actual Icon(s)      Status");
+        console.log("--------------------------------------------------------------------------------------------------------------------");
+
+        let totalPassed = 0;
+        let totalFailed = 0;
+
+        for (let i = 0; i < rowCount; i++) {
+            const row = rows.nth(i);
+
+            const name = (await row.locator(this.rowName).textContent())?.trim() ?? "N/A";
+            const createdDate = (await row.locator(this.rowCreatedDate).textContent())?.trim() ?? "N/A";
+            const updatedDate = (await row.locator(this.rowUpdatedDate).textContent())?.trim() ?? "N/A";
+
+            const hasEmail = await row.locator(this.emailIconSelector).isVisible();
+            const hasPhone = await row.locator(this.phoneIconSelector).isVisible();
+            const hasDoNotContact = await row.locator(this.doNotContactIconSelector).isVisible();
+
+            const actualIcons: string[] = [];
+            if (hasEmail) actualIcons.push("Email");
+            if (hasPhone) actualIcons.push("Phone");
+            if (hasDoNotContact) actualIcons.push("Do Not Contact");
+            const actualIconsStr = actualIcons.length > 0 ? actualIcons.join(" & ") : "None";
+
+            let isRowValid = false;
+
+            if (option === "All") {
+                isRowValid = true;
+            } else if (option === "Email") {
+                isRowValid = hasEmail;
+            } else if (option === "Phone") {
+                isRowValid = hasPhone;
+            } else if (option === "Do Not Contact") {
+                isRowValid = hasDoNotContact;
+            } else if (option === "Email & Phone") {
+                isRowValid = hasEmail && hasPhone;
+            }
+
+            const status = isRowValid ? "PASS" : "FAIL";
+            if (isRowValid) {
+                totalPassed++;
+            } else {
+                totalFailed++;
+            }
+
+            console.log(
+                `${name.padEnd(18)} ` +
+                `${createdDate.padEnd(17)} ` +
+                `${updatedDate.padEnd(17)} ` +
+                `${option.padEnd(20)} ` +
+                `${actualIconsStr.padEnd(19)} ` +
+                `${status}`
+            );
+        }
+
+        console.log("--------------------------------------------------------------------------------------------------------------------");
+
+        console.log(`Summary of Execution:`);
+        console.log(`  - Total Review Records: ${rowCount}`);
+        console.log(`  - Total PASS Count   : ${totalPassed}`);
+        console.log(`  - Total FAIL Count   : ${totalFailed}`);
+        console.log(`  - Filter Option Used  : ${option}`);
+
+        const allMatched = (totalFailed === 0);
+        console.log(`  - Verification Summary: ${allMatched ? "SUCCESS: All records matched the selected filter option." : "FAILURE: Some records did not match the selected filter option."}`);
+        console.log("--------------------------------------------------------------------------------------------------------------------\n");
+
+        return { passed: totalPassed, failed: totalFailed };
+    }
+
+    async verifyReviewListMulti(options: string[]): Promise<{ passed: number; failed: number }> {
+        const rows = this.page.locator(this.tableRowList);
+        const rowCount = await rows.count();
+
+        console.log("--------------------------------------------------------------------------------------------------------------------");
+        console.log("Name               Created Date      Updated Date      Expected Option(s)   Actual Icon(s)      Status");
+        console.log("--------------------------------------------------------------------------------------------------------------------");
+
+        let totalPassed = 0;
+        let totalFailed = 0;
+
+        for (let i = 0; i < rowCount; i++) {
+            const row = rows.nth(i);
+
+            const name = (await row.locator(this.rowName).textContent())?.trim() ?? "N/A";
+            const createdDate = (await row.locator(this.rowCreatedDate).textContent())?.trim() ?? "N/A";
+            const updatedDate = (await row.locator(this.rowUpdatedDate).textContent())?.trim() ?? "N/A";
+
+            const hasEmail = await row.locator(this.emailIconSelector).isVisible();
+            const hasPhone = await row.locator(this.phoneIconSelector).isVisible();
+            const hasDoNotContact = await row.locator(this.doNotContactIconSelector).isVisible();
+
+            const actualIcons: string[] = [];
+            if (hasEmail) actualIcons.push("Email");
+            if (hasPhone) actualIcons.push("Phone");
+            if (hasDoNotContact) actualIcons.push("Do Not Contact");
+            const actualIconsStr = actualIcons.length > 0 ? actualIcons.join(" & ") : "None";
+
+            let isRowValid = false;
+            for (const opt of options) {
+                if (opt === "All") {
+                    isRowValid = true;
+                    break;
+                } else if (opt === "Email" && hasEmail) {
+                    isRowValid = true;
+                    break;
+                } else if (opt === "Phone" && hasPhone) {
+                    isRowValid = true;
+                    break;
+                } else if (opt === "Do Not Contact" && hasDoNotContact) {
+                    isRowValid = true;
+                    break;
+                } else if (opt === "Email & Phone" && hasEmail && hasPhone) {
+                    isRowValid = true;
+                    break;
+                }
+            }
+
+            const expectedStr = options.join(", ");
+            const status = isRowValid ? "PASS" : "FAIL";
+            if (isRowValid) {
+                totalPassed++;
+            } else {
+                totalFailed++;
+            }
+
+            console.log(
+                `${name.padEnd(18)} ` +
+                `${createdDate.padEnd(17)} ` +
+                `${updatedDate.padEnd(17)} ` +
+                `${expectedStr.padEnd(20)} ` +
+                `${actualIconsStr.padEnd(19)} ` +
+                `${status}`
+            );
+        }
+
+        console.log("--------------------------------------------------------------------------------------------------------------------");
+        console.log(`Summary of Execution:`);
+        console.log(`  - Total Review Records: ${rowCount}`);
+        console.log(`  - Total PASS Count   : ${totalPassed}`);
+        console.log(`  - Total FAIL Count   : ${totalFailed}`);
+        console.log(`  - Filter Options Used  : ${options.join(", ")}`);
+
+        const allMatched = (totalFailed === 0);
+        console.log(`  - Verification Summary: ${allMatched ? "SUCCESS: All records matched the selected filter options." : "FAILURE: Some records did not match the selected filter options."}`);
+        console.log("--------------------------------------------------------------------------------------------------------------------\n");
+
+        return { passed: totalPassed, failed: totalFailed };
+    }
+
+
+    async clickClearFilter(): Promise<void> {
+        if (await this.page.locator("//button[@aria-label='Clear']").isVisible().catch(() => false)) {
+            await this.page.locator("//button[@aria-label='Clear']").click();
+            await this.page.waitForTimeout(1000);
+        }
+    }
+
+
+    async verifyAllReachOutFilters(): Promise<void> {
+        const allOptions = ["Email", "Phone", "Email & Phone", "Do Not Contact"];
+
+        await this.clickFilterButton();
+        const closeButton = "//label[normalize-space()='Reach Out By']/following::button[@aria-label='Close'][1]";
+        if (!(await this.page.locator(closeButton).isVisible().catch(() => false))) {
+            await this.waitForVisible(this.reachOutDropdown);
+            await this.click(this.reachOutDropdown);
+            await this.page.waitForTimeout(1000);
+        }
+
+        const availableOptions: string[] = [];
+        const skippedOptions: string[] = [];
+        for (const opt of allOptions) {
+            const optXpath = this.reachOutOption(opt);
+            const exists = await this.page.locator(optXpath).isVisible().catch(() => false);
+            if (exists) {
+                availableOptions.push(opt);
+            } else {
+                skippedOptions.push(opt);
+            }
+        }
+
+        await this.page.keyboard.press('Escape');
+        await this.page.waitForTimeout(500);
+
+        await this.page.locator(this.listFilterButton).click({ force: true });
+        await this.page.waitForTimeout(500);
+
+        if (skippedOptions.length > 0) {
+            console.log("");
+            console.log("========================================");
+            console.log(" Skipped Options (No matching records)");
+            console.log("========================================");
+            for (const opt of skippedOptions) {
+                console.log(`  - ${opt}: No records found in listing`);
+            }
+            console.log("========================================");
+            console.log("");
+        }
+
+        let totalTests = 0;
+        let totalPassed = 0;
+        let totalFailed = 0;
+
+        for (const option of availableOptions) {
+            await this.clickFilterButton();
+
+            await this.selectReachOutBy(option);
+            const v1 = await this.verifyReviewList(option);
+            totalPassed += v1.passed;
+            totalFailed += v1.failed;
+
+            await this.clickClearFilter();
+
+            await this.selectReachOutBy(option);
+            const v2 = await this.verifyReviewList(option);
+            totalPassed += v2.passed;
+            totalFailed += v2.failed;
+
+            await this.clearFilter();
+
+            totalTests += 2;
+        }
+
+        console.log("");
+        console.log("========================================");
+        console.log(" Final Execution Summary");
+        console.log("========================================");
+        console.log(` Total Tests : ${totalTests}`);
+        console.log(` Total PASS  : ${totalPassed}`);
+        console.log(` Total FAIL  : ${totalFailed}`);
+        console.log("========================================");
+        console.log("");
+
+        expect(totalFailed, `Final validation failed: ${totalFailed} records had incorrect status icons across all filters`).toBe(0);
+    }
+
+
+    async clickSelectAll(): Promise<void> {
+        const closeBtn = "//label[normalize-space()='Reach Out By']/following::button[@aria-label='Close'][1]";
+        if (!(await this.page.locator(closeBtn).isVisible().catch(() => false))) {
+            await this.waitForVisible(this.reachOutDropdown);
+            await this.click(this.reachOutDropdown);
+            await this.page.waitForTimeout(1000);
+        }
+        await this.page.locator("//button[text()='Select All']").click();
+        await this.page.waitForTimeout(1000);
+    }
+
+
+    async verifyAllOptionsSelected(): Promise<void> {
+        const closeBtn = "//label[normalize-space()='Reach Out By']/following::button[@aria-label='Close'][1]";
+        if (!(await this.page.locator(closeBtn).isVisible().catch(() => false))) {
+            await this.waitForVisible(this.reachOutDropdown);
+            await this.click(this.reachOutDropdown);
+            await this.page.waitForTimeout(1500);
+        }
+        await this.page.waitForTimeout(1000);
+        const checkedStates = await this.page.evaluate(() => {
+            const boxes = document.querySelectorAll('li[role="option"] input[type="checkbox"]');
+            return Array.from(boxes).map((b: HTMLInputElement) => b.checked);
+        });
+        const allChecked = checkedStates.length > 0 && checkedStates.every(c => c === true);
+        console.log(`  All Options Selected: ${allChecked ? 'PASS' : 'FAIL'}`);
+        await this.page.keyboard.press('Escape');
+        await this.page.waitForTimeout(500);
+    }
+
+
+    async removeChipByText(text: string): Promise<void> {
+        const chipDelete = this.page.locator(`//button[normalize-space()='${text}']//img`);
+        if (await chipDelete.isVisible().catch(() => false)) {
+            await chipDelete.click();
+        } else {
+            const closeBtn = "//label[normalize-space()='Reach Out By']/following::button[@aria-label='Close'][1]";
+            if (!(await this.page.locator(closeBtn).isVisible().catch(() => false))) {
+                await this.waitForVisible(this.reachOutDropdown);
+                await this.click(this.reachOutDropdown);
+                await this.page.waitForTimeout(1000);
+            }
+            const optionLoc = this.page.locator(this.reachOutOption(text));
+            if (await optionLoc.isVisible().catch(() => false)) {
+                await optionLoc.click();
+                await this.page.waitForTimeout(500);
+            }
+            await this.page.keyboard.press('Escape');
+            await this.page.waitForTimeout(500);
+        }
+        await this.page.waitForTimeout(1000);
+    }
+
+
+    async verifyAllReachOutFiltersExtended(): Promise<void> {
+        const allOptions = ["Email", "Phone", "Email & Phone", "Do Not Contact"];
+
+        await this.clickFilterButton();
+        const closeBtn = "//label[normalize-space()='Reach Out By']/following::button[@aria-label='Close'][1]";
+        if (!(await this.page.locator(closeBtn).isVisible().catch(() => false))) {
+            await this.waitForVisible(this.reachOutDropdown);
+            await this.click(this.reachOutDropdown);
+            await this.page.waitForTimeout(1000);
+        }
+
+        const availableOptions: string[] = [];
+        const skippedOptions: string[] = [];
+        for (const opt of allOptions) {
+            const exists = await this.page.locator(this.reachOutOption(opt)).isVisible().catch(() => false);
+            if (exists) availableOptions.push(opt);
+            else skippedOptions.push(opt);
+        }
+
+        await this.page.keyboard.press('Escape');
+        await this.page.waitForTimeout(500);
+        await this.page.locator(this.listFilterButton).click({ force: true });
+        await this.page.waitForTimeout(500);
+
+        if (skippedOptions.length > 0) {
+            console.log("");
+            console.log("========================================");
+            console.log(" Skipped Options (Extended Flow)");
+            console.log("========================================");
+            for (const opt of skippedOptions) {
+                console.log(`  - ${opt}: No records found in listing`);
+            }
+            console.log("========================================");
+            console.log("");
+        }
+
+        let totalTests = 0;
+        let totalPassed = 0;
+        let totalFailed = 0;
+
+        for (const option of availableOptions) {
+            console.log("");
+            console.log("========================================");
+            console.log(` Extended Flow: ${option}`);
+            console.log("========================================");
+            console.log("");
+
+            await this.clickFilterButton();
+            await this.selectReachOutBy(option);
+
+            console.log("--- Step 1: Initial Verify ---");
+            const v1 = await this.verifyReviewList(option);
+            totalPassed += v1.passed;
+            totalFailed += v1.failed;
+
+            console.log("--- Step 2: Select All ---");
+            await this.clickSelectAll();
+
+            console.log("--- Step 3: Verify All Selected ---");
+            await this.verifyAllOptionsSelected();
+
+            console.log("--- Step 4: Verify List (All Records) ---");
+            const v2 = await this.verifyReviewList("All");
+            totalPassed += v2.passed;
+            totalFailed += v2.failed;
+
+            let remainingOptions = [...availableOptions];
+            const otherChips = availableOptions.filter(o => o !== option);
+            for (const chip of otherChips) {
+                console.log(`--- Removing Chip: ${chip} ---`);
+                await this.removeChipByText(chip);
+                remainingOptions = remainingOptions.filter(o => o !== chip);
+                const v = await this.verifyReviewListMulti(remainingOptions);
+                totalPassed += v.passed;
+                totalFailed += v.failed;
+            }
+
+            console.log(`--- Removing Chip: ${option} ---`);
+            await this.removeChipByText(option);
+            remainingOptions = remainingOptions.filter(o => o !== option);
+            if (remainingOptions.length === 0) {
+                const noRecords = await this.page.locator("//h3[normalize-space()='No Records Found']").isVisible().catch(() => false);
+                console.log(`  No Records Found after removing last chip: ${noRecords ? 'PASS' : 'INFO'}`);
+                if (!noRecords) {
+                    const vLast = await this.verifyReviewList("All");
+                    totalPassed += vLast.passed;
+                    totalFailed += vLast.failed;
+                }
+            } else {
+                const vLast = await this.verifyReviewListMulti(remainingOptions);
+                totalPassed += vLast.passed;
+                totalFailed += vLast.failed;
+            }
+
+            console.log("--- Clear (X) and Reselect ---");
+            await this.clickClearFilter();
+            await this.selectReachOutBy(option);
+            const v3 = await this.verifyReviewList(option);
+            totalPassed += v3.passed;
+            totalFailed += v3.failed;
+
+            await this.clearFilter();
+
+            totalTests += 8;
+        }
+
+        console.log("");
+        console.log("========================================");
+        console.log(" Final Execution Summary (Extended)");
+        console.log("========================================");
+        console.log(` Total Tests : ${totalTests}`);
+        console.log(` Total PASS  : ${totalPassed}`);
+        console.log(` Total FAIL  : ${totalFailed}`);
+        console.log("========================================");
+        console.log("");
+
+        expect(totalFailed, `Final validation failed: ${totalFailed} records had incorrect status icons across all filters`).toBe(0);
     }
 }

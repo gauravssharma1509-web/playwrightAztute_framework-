@@ -9,15 +9,10 @@ test.beforeEach(async ({ page, loginPage }) => {
     await manualReviewPage.openManualReviews();
 });
 
-test('@Verify sorting functionality for Name, Created Date and Updated Date columns', async ({ page }) => {
+test('@Verify sorting functionality for Name, Created Date and Updated Date columns', async ({ }) => {
     test.setTimeout(60000);
 
-    await manualReviewPage.verifyNameSortingAscending();
-    await manualReviewPage.verifyNameSortingDescending();
-    await manualReviewPage.verifyCreatedDateSortingAscending();
-    await manualReviewPage.verifyCreatedDateSortingDescending();
-    await manualReviewPage.verifyUpdatedDateSortingAscending();
-    await manualReviewPage.verifyUpdatedDateSortingDescending();
+    await manualReviewPage.verifySortingFunctionality();
 });
 
 test('@Verify Records Per Page and Pagination', async ({ }) => {
@@ -36,4 +31,14 @@ test('@Verify Manual Review Search Functionality', async ({ }) => {
 test('@Verify Manual Review Date Filter Functionality', async ({ }) => {
     test.setTimeout(600000);
     await manualReviewPage.verifyManualReviewDateFilter();
+});
+
+test('@Verify Reach Out By Dropdown Filter options and status icons', async ({ }) => {
+    test.setTimeout(180000);
+    await manualReviewPage.verifyAllReachOutFilters();
+});
+
+test('@Verify Reach Out By Extended Flow with Select All and Chip Removal', async ({ }) => {
+    test.setTimeout(600000);
+    await manualReviewPage.verifyAllReachOutFiltersExtended();
 });
