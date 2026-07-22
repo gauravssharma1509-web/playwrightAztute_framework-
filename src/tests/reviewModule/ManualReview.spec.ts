@@ -11,7 +11,6 @@ test.beforeEach(async ({ page, loginPage }) => {
 
 test('@Verify sorting functionality for Name, Created Date and Updated Date columns', async ({ }) => {
     test.setTimeout(60000);
-
     await manualReviewPage.verifySortingFunctionality();
 });
 

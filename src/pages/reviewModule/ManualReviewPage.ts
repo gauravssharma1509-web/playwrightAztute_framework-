@@ -29,7 +29,6 @@ export class ManualReviewPage extends BasePage {
 
 
 
-    // LOCATORS 
 
     private reviewsMenu = "//span[normalize-space()='Reviews']";
     private manualReviews = "//a[normalize-space()='Manual Reviews']"
@@ -115,7 +114,6 @@ export class ManualReviewPage extends BasePage {
 
 
 
-    // ACTION 
 
 
 
@@ -1092,13 +1090,12 @@ export class ManualReviewPage extends BasePage {
                     'July', 'August', 'September', 'October', 'November', 'December'];
                 const headerDivs = document.querySelectorAll('.calendar header span > div:first-child');
                 for (const div of headerDivs) {
-                    // Normalize: "June\n2026" or "June2026" → "June 2026"
                     const text = (div.textContent ?? '').replace(/\s+/g, ' ').trim();
                     for (const m of monthNames) {
                         const pattern = new RegExp(`^${m}\\s*(\\d{4})$`);
                         const match = text.match(pattern);
                         if (match) {
-                            return `${m} ${match[1]}`; // normalized "June 2026"
+                            return `${m} ${match[1]}`;
                         }
                     }
                 }
@@ -1108,7 +1105,7 @@ export class ManualReviewPage extends BasePage {
             if (calText) {
                 const { month, year } = this.parseCalendarMonthYear(calText);
                 if (month === targetMonth && year === targetYear) {
-                    return; // Already on the correct month/year
+                    return;
                 }
                 const targetDate = new Date(targetYear, this.monthNames.indexOf(targetMonth));
                 const calDate = new Date(year, this.monthNames.indexOf(month));
@@ -1854,8 +1851,8 @@ export class ManualReviewPage extends BasePage {
         }
         await this.page.waitForTimeout(1000);
         const checkedStates = await this.page.evaluate(() => {
-            const boxes = document.querySelectorAll('li[role="option"] input[type="checkbox"]');
-            return Array.from(boxes).map((b: HTMLInputElement) => b.checked);
+            const boxes = document.querySelectorAll<HTMLInputElement>('li[role="option"] input[type="checkbox"]');
+            return Array.from(boxes).map(b => b.checked);
         });
         const allChecked = checkedStates.length > 0 && checkedStates.every(c => c === true);
         console.log(`  All Options Selected: ${allChecked ? 'PASS' : 'FAIL'}`);
