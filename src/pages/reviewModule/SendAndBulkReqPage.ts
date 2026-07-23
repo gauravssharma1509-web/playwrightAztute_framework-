@@ -251,7 +251,6 @@ export class SendAndBulkReqPage extends BasePage {
         await this.click(this.patientSearchBtn);
         await expect(this.page.locator(this.popupSearchInput)).toBeVisible();
 
-        // Helper to capture patients currently rendered in the popup DOM
         const capturePopupPatients = (): Promise<{ name: string; phone: string; email: string }[]> => {
             return this.page.evaluate(() => {
                 const input = document.querySelector('input[placeholder="Search among patients"]');
@@ -278,7 +277,7 @@ export class SendAndBulkReqPage extends BasePage {
             });
         };
 
-        // Helper to scroll the popup patient list container incrementally
+        
         let scrolledToTop = false;
         const scrollPopupDown = (): Promise<boolean> => {
             return this.page.evaluate((alreadyToTop) => {
@@ -668,11 +667,10 @@ export class SendAndBulkReqPage extends BasePage {
             await this.page.waitForTimeout(400);
 
             console.log("Scrolling to bottom...");
-
             let allLoaded = await this.page.locator(this.allPatientsLoaded).isVisible().catch(() => false);
             let attempts = 0;
 
-            while (!allLoaded && attempts < 50) {
+            while (!allLoaded && attempts < 5000) {
                 await this.page.evaluate(() => {
                     const input = document.querySelector('input[placeholder="Search among patients"]');
                     if (!input) return;
@@ -698,7 +696,7 @@ export class SendAndBulkReqPage extends BasePage {
                 attempts++;
             }
 
-            console.log("✓ All patients loaded");
+            console.log(" All patients loaded");
 
             const cards = await this.page.evaluate(() => {
                 const input = document.querySelector('input[placeholder="Search among patients"]');
