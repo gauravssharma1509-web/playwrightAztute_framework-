@@ -12,8 +12,8 @@ export class ReviewSettingPage extends BasePage {
 
 
 
-    private menuOpenBtn ="//div[@role='button' and contains(@class,'bg-accent')]" +"//span[normalize-space(text())='menu_open']";
-    private locationDropdownArrow ="//span[contains(@class,'material-symbols-outlined')" + " and contains(text(),'keyboard_arrow_')]";
+    private menuOpenBtn = "//div[@role='button' and contains(@class,'bg-accent')]" + "//span[normalize-space(text())='menu_open']";
+    private locationDropdownArrow = "//span[contains(@class,'material-symbols-outlined')" + " and contains(text(),'keyboard_arrow_')]";
     private locationItem = (name: string) => `//li[contains(@class,'MuiListItem-root')]` + `//p[normalize-space(text())='${name}']`;
     private reviewsMenuDropdown = "//div[contains(@class,'cursor-pointer') and .//span[normalize-space(text())='Reviews']]";
     private reviewSettingsOption = "//a[normalize-space(text())='Review Settings']";
@@ -65,7 +65,7 @@ export class ReviewSettingPage extends BasePage {
     private monthlyGoalInput = (monthLabel: string) => `//div[h5[normalize-space(.)='${monthLabel}']]//input`;
     private reviewsMenu = "//span[normalize-space()='Reviews']";
     private revieweSetting = "//a[normalize-space()='Review Settings']"
-
+    private emailNotificationsToggle1 = "//input[@type='checkbox' and @role='switch']";
 
 
 
@@ -474,17 +474,41 @@ export class ReviewSettingPage extends BasePage {
     }
 
     async verifyUpdatedEmailValidation(): Promise<void> {
+
+        // Email Notifications toggle (change nth(1) if required)
+        const toggle = this.page.getByRole('switch').nth(1);
+
+        // Turn ON only if it is OFF
+        if (!(await toggle.isChecked())) {
+            await toggle.check();
+        }
+
+        // Clear existing email chips
         await this.clearUpdatedEmailChips();
+
+        // Add 3 valid email addresses
         const emails = await this.addMultipleUpdatedEmails(3);
+
+        // Verify maximum email validation
         await this.addUpdatedEmail(faker.internet.email());
         await this.verifyUpdatedMaxEmailError();
+
+        // Clear input
         await this.clearUpdatedInput();
+
+        // Remove two email chips
         await this.removeSpecificEmailChip(emails[2]);
         await this.removeSpecificEmailChip(emails[1]);
+
+        // Verify duplicate email validation
         await this.addUpdatedEmail(emails[0]);
         await this.verifyUpdatedDuplicateEmailError();
-        await this.addUpdatedEmail('invalidemail');
+
+        // Verify invalid email validation
+        await this.addUpdatedEmail("invalidemail");
         await this.verifyUpdatedInvalidEmailError();
+
+        // Verify max length validation
         await this.verifyUpdatedEmailMaxLength();
     }
 
