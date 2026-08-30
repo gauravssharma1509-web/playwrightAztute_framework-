@@ -3,25 +3,25 @@ import { ConfigReader } from '../utils/ConfigReader';
 
 export class BasePage {
 
-    constructor(protected page: Page) {}
+    constructor(protected page: Page) { }
 
     async openApplication(url?: string): Promise<void> {
-    const appUrl = url ?? ConfigReader.get("BASE_URL");
-    console.log("Opening :", appUrl);
-    await this.page.goto(appUrl, {
-        waitUntil: "domcontentloaded"
-    });
-    console.log("After goto :", this.page.url());
-}
+        const appUrl = url ?? ConfigReader.get("BASE_URL");
+        console.log("Opening :", appUrl);
+        await this.page.goto(appUrl, {
+            waitUntil: "domcontentloaded"
+        });
+        console.log("After goto :", this.page.url());
+    }
 
     async click(locator: string): Promise<void> {
-    await this.page.locator(locator).waitFor({
-        state: "visible"
-    });
+        await this.page.locator(locator).waitFor({
+            state: "visible"
+        });
 
-    await this.page.locator(locator).click();
+        await this.page.locator(locator).click();
 
-}
+    }
     async fill(locator: string, value: string): Promise<void> {
         await this.page.locator(locator).fill(value);
     }
@@ -32,6 +32,12 @@ export class BasePage {
 
     async getText(locator: string): Promise<string> {
         return (await this.page.locator(locator).textContent()) ?? "";
+    }
+    async inputValue(locator: string): Promise<string> {
+        return await this.page.locator(locator).inputValue();
+    }
+    async press(locator: string, key: string): Promise<void> {
+        await this.page.locator(locator).press(key);
     }
 
     async isVisible(locator: string): Promise<boolean> {
@@ -54,6 +60,12 @@ export class BasePage {
 
     async selectDropdown(locator: string, value: string): Promise<void> {
         await this.page.locator(locator).selectOption(value);
+    }
+
+    async clearAndFill(locator: string, value: string): Promise<void> {
+        await this.page.locator(locator).click({ clickCount: 2 });
+        await this.page.keyboard.press("Backspace");
+        await this.page.locator(locator).fill(value);
     }
 
     async verifyUrl(expected: RegExp): Promise<void> {
